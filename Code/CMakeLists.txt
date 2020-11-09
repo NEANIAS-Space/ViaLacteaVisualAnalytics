@@ -10,11 +10,18 @@ find_package(Qt5 COMPONENTS Core Network GUI PrintSupport Xml Widgets Concurrent
 find_package(VTK COMPONENTS 
   vtkCommonColor
   vtkCommonCore
+  vtkGUISupportQt
+  vtkFiltersSources
   vtkCommonDataModel
   vtkInteractionStyle
   vtkRenderingCore
   vtkRenderingFreeType
+  vtkRenderingContextOpenGL2
+  vtkRenderingGL2PSOpenGL2
+  vtkViewsQt
   vtkRenderingOpenGL2 QUIET)
+
+
 if (NOT VTK_FOUND)
   message("Skipping ViaLactea: ${VTK_NOT_FOUND_MESSAGE}")
   return ()
