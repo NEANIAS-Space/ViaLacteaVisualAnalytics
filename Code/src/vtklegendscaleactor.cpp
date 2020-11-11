@@ -279,8 +279,8 @@ int vtkLegendScaleActor::RenderOverlay(vtkViewport *viewport)
     return renderedSomething;
 }
 
-
-void vtkLegendScaleActor::setFitsFile(vtkSmartPointer<vtkFitsReader> fits )
+//----------------------------
+void vtkLegendScaleActor::setFitsFile(vtkSmartPointer<vtkFitsReader> fits)
 {
     myfits=fits;
 }

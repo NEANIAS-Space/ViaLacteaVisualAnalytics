@@ -37,8 +37,7 @@
 #include "vtkSmartPointer.h"
 #include "vialactea.h"
 #include "sed.h"
-//#include "vosamp.h"
-//#include "visivofilterdesktop.h"
+
 #include "customprocess.h"
 
 /*

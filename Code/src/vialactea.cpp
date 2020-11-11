@@ -84,8 +84,19 @@ ViaLactea::ViaLactea(QWidget *parent) :
     }
     ui->webView->setContextMenuPolicy(Qt::CustomContextMenu);
 
+    //TODO: receive a message clicked()
+    //suggestion
     connect(ui->webView, SIGNAL(clicked()), this, SLOT(on_queryPushButton_clicked()));
+    connect(ui->webView, SIGNAL(selectionChanged()), this, SLOT(textSelected()));
+    //connect(ui->webView, SIGNAL(statusBarMessage(QString)),
+    //           this, SIGNAL(on_webViewStatusBarMessage(QString)));
+    connect(ui->webView->page(), SIGNAL(statusBarMessage(QString)), this, SIGNAL(on_webViewStatusBarMessage(QString)));
+
+
+
     QObject::connect( this, SIGNAL(destroyed()), qApp, SLOT(quit()) );
+
+
 /*
     if (tilePath=="")
     {
@@ -123,9 +134,28 @@ ViaLactea::ViaLactea(QWidget *parent) :
 
 ViaLactea::~ViaLactea()
 {
+
     delete ui;
 }
 
+void ViaLactea::quitApp()
+{
+//Problem not only in this
+ QWebEnginePage *p =ui->webView->page();
+ p->disconnect(ui->webView);
+ delete p;
+ std::cout<<"Deleted" << std::endl;
+
+
+}
+
+void ViaLactea::textSelected()
+{
+
+ std::cout<<"TextSelected" << std::endl;
+
+
+}
 
 void ViaLactea::updateVLKBSetting()
 {
@@ -170,7 +200,6 @@ void ViaLactea::on_PLW_checkBox_clicked()
 
 void ViaLactea::on_queryPushButton_clicked()
 {
-
 
     VialacteaInitialQuery *vq;
     if (ui->saveToDiskCheckBox->isChecked())
@@ -228,6 +257,8 @@ void ViaLactea::on_noneRadioButton_clicked(bool checked)
         ui->webView->page()->runJavaScript( "activatePointSelection(false)" );
         ui->webView->page()->runJavaScript( "activateRectangularSelection(false)" );
     }
+
+
 }
 
 void ViaLactea::on_saveToDiskCheckBox_clicked(bool checked)
@@ -248,9 +279,9 @@ void ViaLactea::on_selectFsPushButton_clicked()
 }
 
 
-void ViaLactea::on_webView_statusBarMessage(const QString &text)
+void ViaLactea::on_webViewStatusBarMessage(const QString &text)
 {
-
+std::cout<<"WebViewStatus"<<std::endl;
 //    QObject e = ui->webView->page()-> ( ->findChild("div#selected_point");
     QString result;
     ui->webView->page()->runJavaScript("function myFunction() {"
@@ -303,7 +334,7 @@ void ViaLactea::on_webView_statusBarMessage(const QString &text)
         //  on_noneRadioButton_clicked(true);
     }
 
-
+std::cout<<"debug StatusBUR "<< std::endl;
 }
 
 void ViaLactea::on_glonLineEdit_textChanged(const QString &arg1)
@@ -387,13 +418,17 @@ void ViaLactea::on_localDCPushButton_clicked()
 void ViaLactea::on_actionExit_triggered()
 {
     // QCoreApplication::exit(0);
+
     this->close();
 }
 
 void   ViaLactea::closeEvent(QCloseEvent*)
 {
+
+    //quitApp();
     qApp->closeAllWindows();
     //    qApp->quit();
+
 }
 
 void ViaLactea::on_actionAbout_triggered()
