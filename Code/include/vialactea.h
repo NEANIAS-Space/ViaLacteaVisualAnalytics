@@ -5,9 +5,20 @@
 #include <QMap>
 #include <QPair>
 
+
 namespace Ui {
 class ViaLactea;
 }
+
+class WebProcess : public QObject
+{
+    Q_OBJECT
+    public slots:
+    void jsCall( const QString &point,const QString &radius);
+           signals:
+    void processJavascript(const QString &point,const QString &radius);
+
+};
 
 class ViaLactea : public QMainWindow
 {
@@ -19,6 +30,8 @@ public:
 
     ~ViaLactea();
 
+    //for javascript communication procedures
+    WebProcess * webobj;
 private slots:
     void quitApp(); //Added page delete befor main app quits
     void textSelected();//test for selection changed
@@ -27,7 +40,7 @@ private slots:
     void on_noneRadioButton_clicked(bool checked);
     void on_saveToDiskCheckBox_clicked(bool checked);
     void on_selectFsPushButton_clicked();
-    void on_webViewStatusBarMessage(const QString &text);
+    void on_webViewStatusBarMessage(const QString &point,const QString &radius);
     void on_glonLineEdit_textChanged(const QString &arg1);
     void on_glatLineEdit_textChanged(const QString &arg1);
     void on_radiumLineEdit_textChanged(const QString &arg1);

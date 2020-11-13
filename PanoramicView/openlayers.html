@@ -13,6 +13,7 @@
             .olControlLayerSwitcher .layersDiv { border-radius: 10px 0 0 10px; }
         </style>
             <script src="OpenLayers.js"></script>
+            <script type="text/javascript" src="qwebchannel.js"></script>
             <script>
 
 
@@ -78,6 +79,14 @@
                 }
 
             });
+
+            //enable javasctipt/c++ communication
+
+            new QWebChannel(qt.webChannelTransport,
+ function(channel){
+ var webobj = channel.objects.webobj;
+ window.qtWeb = webobj;
+ });
 
               var map;
 
@@ -192,6 +201,7 @@
   			pointControl.events.register('featureadded', pointControl, function(f)
   			{
   				if (polygonLayer.features.length >1)
+
   				{
   					polygonLayer.removeFeatures(polygonLayer.features[0]);
   				}
@@ -199,7 +209,9 @@
 				OpenLayers.Util.getElement("selected_point").innerHTML = v;
 				OpenLayers.Util.getElement("selected_radius").innerHTML = "";
 
-			    window.status="";
+			    //window.status="";
+
+          qtWeb.jsCall(v,"");
 
    			});
 
@@ -311,9 +323,13 @@
   				{
   					polygonLayer.removeFeatures(polygonLayer.features[0]);
   				}
-				OpenLayers.Util.getElement("selected_point").innerHTML = lon_final.toFixed(4) +"," + lat_final.toFixed(4);
-				OpenLayers.Util.getElement("selected_radius").innerHTML = dl.toFixed(4) +"," + db.toFixed(4);
-			    window.status="";
+          var point=lon_final.toFixed(4) +"," + lat_final.toFixed(4);
+          var radius=dl.toFixed(4) +"," + db.toFixed(4);
+				OpenLayers.Util.getElement("selected_point").innerHTML = point;
+				OpenLayers.Util.getElement("selected_radius").innerHTML = radius;
+			    //window.status="";
+
+          qtWeb.jsCall(point,radius);
 
 
    			});

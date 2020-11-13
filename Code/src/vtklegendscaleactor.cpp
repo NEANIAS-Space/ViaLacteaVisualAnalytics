@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtklegendscaleactor.h"
+#include "vtkLegendScaleActor.h"
 #include "vtkAxisActor2D.h"
 #include "vtkCommand.h"
 #include "vtkObjectFactory.h"

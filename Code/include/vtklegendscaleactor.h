@@ -50,6 +50,7 @@ class vtkTextMapper;
 class vtkPoints;
 class vtkCoordinate;
 
+
 class VTKRENDERINGANNOTATION_EXPORT vtkLegendScaleActor : public vtkProp
 {
 public:
