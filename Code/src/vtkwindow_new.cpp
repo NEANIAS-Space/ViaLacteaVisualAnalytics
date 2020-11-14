@@ -62,7 +62,7 @@
 #include "vialacteainitialquery.h"
 #include "selectedsourcesform.h"
 #include "vtkContourFilter.h"
-#include "vtklegendscaleactor.h"
+#include "customvtklegendscaleactor.h"
 #include "vtkAxisActor2D.h"
 #include "vtkCubeAxesActor.h"
 #include "lutcustomize.h"
@@ -1279,7 +1279,7 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         imageStack->AddImage(imageSliceBase);
 
 
-        vtkSmartPointer<vtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<vtkLegendScaleActor>::New();
+        vtkSmartPointer<CustomVtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<CustomVtkLegendScaleActor>::New();
         legendScaleActorImage->LegendVisibilityOff();
         legendScaleActorImage->setFitsFile(myfits);
 
@@ -1484,7 +1484,7 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         m_Ren1->GetActiveCamera( )->GetFocalPoint(cam_init_foc);
 
 
-        vtkSmartPointer<vtkLegendScaleActor> legendScaleActor3d =  vtkSmartPointer<vtkLegendScaleActor>::New();
+        vtkSmartPointer<CustomVtkLegendScaleActor> legendScaleActor3d =  vtkSmartPointer<CustomVtkLegendScaleActor>::New();
 
         legendScaleActor3d->LegendVisibilityOff();
         legendScaleActor3d->setFitsFile(myfits);
@@ -1521,7 +1521,7 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         setSliceDatacube(1);
         setSliceDatacube(0);
 
-        vtkSmartPointer<vtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<vtkLegendScaleActor>::New();
+        vtkSmartPointer<CustomVtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<CustomVtkLegendScaleActor>::New();
 
         legendScaleActorImage->LegendVisibilityOff();
         legendScaleActorImage->setFitsFile(myfits);
