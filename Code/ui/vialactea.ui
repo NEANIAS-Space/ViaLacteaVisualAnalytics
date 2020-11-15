@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1266</width>
-    <height>835</height>
+    <height>843</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -570,7 +570,7 @@
      <x>0</x>
      <y>0</y>
      <width>1266</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <property name="nativeMenuBar">
