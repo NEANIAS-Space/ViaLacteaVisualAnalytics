@@ -6,8 +6,9 @@
 
 QT       += core gui network printsupport xml  widgets concurrent webkitwidgets
 #CONFIG   += static
-QMAKE_MAC_SDK = macosx10.13
+#QMAKE_MAC_SDK = macosx10.7
 CONFIG-=app_bundle
+CONFIG+=c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -36,7 +37,8 @@ LIBS += -lvtkChartsCore-6.2 -lvtkCommonColor-6.2 -lvtkCommonComputationalGeometr
 LIBS += -lm -lc  -lpthread -lcurl
 LIBS += /Users/fxbio6600/OACT/VisIVOServer_svn_locale/branches/2.3/API_LIGHT/libVisIVOApi.a
 LIBS += -L/opt/hdf5-1.10.0-patch1/lib/ -lhdf5
-LIBS += /usr/lib/libc++.dylib
+#LIBS += /System/DriverKit/usr/lib/libc++.dylib
+#/usr/lib/libc++.dylib
 
 macx:LIBS +=  -framework \
     Foundation \

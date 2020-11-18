@@ -748,8 +748,29 @@ public:
         isSlice=true;
     }
 
+
+
     virtual void OnMouseMove()
     {
+
+        vtkRenderWindowInteractor* rwi = this->Interactor;
+        if (this->CurrentImageProperty)
+       {
+            vtkImageProperty* property = this->CurrentImageProperty;
+
+            if (!vtkwin->image_init_window_level.contains(property))
+            {
+                qDebug()<<"setto image_init_window_level ";
+                vtkwin->image_init_window_level.insert(property,property->GetColorWindow());
+            }
+
+            if (!vtkwin->image_init_color_level.contains(property))
+            {
+                qDebug()<<"setto image_init_color_level ";
+
+                vtkwin->image_init_color_level.insert(property,property->GetColorLevel());
+            }
+        }
 
         // Forward events
         vtkSmartPointer<vtkCoordinate> coordinate = vtkSmartPointer<vtkCoordinate>::New();
@@ -810,62 +831,47 @@ public:
 
         vtkwin->ui->statusbar->showMessage(statusBarText);
 
-        /*
 
-        vtkSmartPointer<vtkImageActorPointPlacer> pointPlacer = vtkSmartPointer<vtkImageActorPointPlacer>::New();
-        if (!isSlice)
-            pointPlacer->SetImageActor(vtkwin->imageViewer->GetImageActor());
-        else
-            pointPlacer->SetImageActor(vtkwin->viewer->GetImageActor());
-
-
-        QString statusBarText="";
-
-        if(pointPlacer->ValidateWorldPosition(world_coord)==1)
-        {
-
-            float* pixel;
-            if(!isSlice)
-                pixel=static_cast< float*>(vtkwin->getFitsImage()->GetOutput()->GetScalarPointer(world_coord[0],world_coord[1],0));
-            else
-                pixel=static_cast< float*>(vtkwin->getFitsImage()->GetOutput()->GetScalarPointer(world_coord[0],world_coord[1],vtkwin->viewer->GetSlice()));
-
-
-            statusBarText = "<value> "+QString::number(pixel[0]);
-            statusBarText+= " <image> X: "+QString::number(world_coord[0])+" Y: "+QString::number(world_coord[1]);
-
-            //WCS_GALACTIC = 3
-            //  AstroUtils().xy2sky(vtkwin->getFilenameWithPath(),world_coord[0],world_coord[1],sky_coord_gal,3);
-            AstroUtils().xy2sky(vtkwin->filenameWithPath,world_coord[0],world_coord[1],sky_coord_gal,3);
-
-
-            statusBarText+=" <galactic> GLON: "+QString::number(sky_coord_gal[0])+" GLAT: "+QString::number(sky_coord_gal[1]);
-
-            //WCS_J2000 = 1
-            AstroUtils().xy2sky(vtkwin->filenameWithPath,world_coord[0],world_coord[1],sky_coord_fk5,1);
-            //  AstroUtils().xy2sky(vtkwin->getFilenameWithPath(),world_coord[0],world_coord[1],sky_coord_fk5,1);
-
-            statusBarText+=" <fk5> RA: "+QString::number(sky_coord_fk5[0])+" DEC: "+QString::number(sky_coord_fk5[1]);
-
-
-            //  AstroUtils().xy2sky(vtkwin->getFilenameWithPath(),world_coord[0],world_coord[1],sky_coord);
-            AstroUtils().xy2sky(vtkwin->filenameWithPath,world_coord[0],world_coord[1],sky_coord);
-            statusBarText+=" <ecliptic> RA: "+QString::number(sky_coord[0])+" DEC: "+QString::number(sky_coord[1]);
-
-        }
-        else
-        {
-            statusBarText="";
-        }
-
-        vtkwin->ui->statusbar->showMessage(statusBarText);
- */
         vtkInteractorStyleImage::OnMouseMove();
 
     }
 
     virtual void OnChar()
     {
+        vtkRenderWindowInteractor* rwi = this->Interactor;
+
+         switch (rwi->GetKeyCode())
+         {
+           case 'r':
+           case 'R':
+             // Allow either shift/ctrl to trigger the usual 'r' binding
+             // otherwise trigger reset window level event
+             if (rwi->GetShiftKey() || rwi->GetControlKey())
+             {
+               this->Superclass::OnChar();
+             }
+             else if (this->HandleObservers && this->HasObserver(vtkCommand::ResetWindowLevelEvent))
+             {
+               this->InvokeEvent(vtkCommand::ResetWindowLevelEvent, this);
+             }
+             else if (this->CurrentImageProperty)
+             {
+               vtkImageProperty* property = this->CurrentImageProperty;
+               qDebug()<<property;
+
+                property->SetColorWindow( vtkwin->image_init_window_level.value(property));
+                property->SetColorLevel( vtkwin->image_init_color_level.value(property));
+
+
+                 qDebug()<<vtkwin->image_init_window_level.value(property);
+
+                      // property->SetColorWindow(this->WindowLevelInitial[0]);
+              // property->SetColorLevel(this->WindowLevelInitial[1]);
+               this->Interactor->Render();
+             }
+             break;
+          }
+
     }
 
     virtual void PrintSelf(std::ostream& os, vtkIndent indent) {}
@@ -1213,18 +1219,13 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         compact->addAction(remote);
         compact->addAction(selector_3D);
         compact->addAction(normal_selector);
-        /*
-        ui->qVTK1->setContextMenuPolicy(Qt::CustomContextMenu);
-        this->Connections = vtkSmartPointer<vtkEventQtSlotConnect>::New();
-        this->Connections->Connect( ui->qVTK1->GetRenderWindow()->GetInteractor(), vtkCommand::RightButtonPressEvent ,this,SLOT(slot_clicked(vtkObject*, unsigned long, void*, void*)));
-*/
 
 
         setVtkInteractorStyleImage();
 
         double* range = vis->GetOutput()->GetScalarRange();
 
-        //   qDebug()<<" r: "<<range[0]<<" .. "<<range[1];
+        qDebug()<<" r: "<<range[0]<<" .. "<<range[1];
         vtkSmartPointer<vtkImageShiftScale> resultScale = vtkSmartPointer<vtkImageShiftScale>::New();
         resultScale->SetOutputScalarTypeToUnsignedChar();
         resultScale->SetInputData( vis->GetOutput() );
@@ -1252,13 +1253,14 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         vtkSmartPointer<vtkImageSliceMapper> imageSliceMapperBase = vtkSmartPointer<vtkImageSliceMapper>::New();
 
         imageSliceMapperBase->SetInputData(colors->GetOutput());
-        //  imageSliceMapperBase->SetInputData(vis->GetOutput());
 
         vtkSmartPointer<vtkImageSlice> imageSliceBase = vtkSmartPointer<vtkImageSlice>::New();
         imageSliceBase->SetMapper(imageSliceMapperBase);
         imageSliceBase->GetProperty()->SetInterpolationTypeToNearest();
 
         imageSliceBase->GetProperty()->SetLayerNumber(0);
+
+
 
 
         // Stack
