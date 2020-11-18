@@ -93,21 +93,8 @@ VisIVOImporterDesktop::VisIVOImporterDesktop(QString f, TreeModel * m, bool isBa
 
 
     QSettings settings(m_sSettingsFile, QSettings::NativeFormat);
-    QString user= "";
-    QString pass = "";
-    QString url_prefix = "";
-
-    if (settings.value("vlkbtype", "public").toString()=="private")
-    {
-         user= settings.value("vlkbuser", "").toString();
-         pass = settings.value("vlkbpass", "").toString();
-         url_prefix = user+":"+pass;
-    }
-
-
-
-    settings.setValue("vlkburl","http://"+url_prefix+"@ia2-vialactea.oats.inaf.it:8080/libjnifitsdb-1.0.2/");
-
+    settings.setValue("vlkburl","http://vialactea:secret@ia2-vialactea.oats.inaf.it:8080/libjnifitsdb-1.0.2/");
+    //    settings.setValue("vlkburl","http://vialactea:secret@ia2-vialactea.oats.inaf.it:8080/libjnifitsdb-0.22.0/");
     float  flux22Multiplier= 1;
 
     if(!isBandMergedCatalogue)
@@ -122,6 +109,7 @@ VisIVOImporterDesktop::VisIVOImporterDesktop(QString f, TreeModel * m, bool isBa
         firstSEDNode=true;
         double distances;
 
+//        for(int  i = 0; i < 3; i++)
 
         for(int  i = 0; i < m_VisIVOTable->getNumberOfRows()/2; i++)
         {
@@ -1340,6 +1328,7 @@ void VisIVOImporterDesktop::doImport(QString wavelen, bool usingAPI)
 
             vtiReader->SetFileName(fileName.toStdString().c_str());
             vtiReader->Update();
+
             volumeMapper->SetInputConnection(vtiReader->GetOutputPort());
 
 
@@ -1470,6 +1459,8 @@ y
 
     }
 }
+
+
 
 void VisIVOImporterDesktop::onProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {

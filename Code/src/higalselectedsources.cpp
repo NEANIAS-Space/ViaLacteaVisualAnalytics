@@ -180,7 +180,9 @@ void HigalSelectedSources::drawSingleEllipse(vtkEllipse * ellipse )
 {
 
     vtkSmartPointer<vtkCleanPolyData> cleanFilter = vtkSmartPointer<vtkCleanPolyData>::New();
+
     cleanFilter->SetInputData(ellipse->getPolyData());
+
 
     cleanFilter->Update();
 

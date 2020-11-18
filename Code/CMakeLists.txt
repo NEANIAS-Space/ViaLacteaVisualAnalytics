@@ -45,10 +45,10 @@ vtkFiltersVerdict
 vtkGUISupportQt
 vtkGUISupportQtSQL
 vtkGeovisCore
-vtkIOAMR
+#vtkIOAMR
 vtkIOCore
-vtkIOEnSight
-vtkIOExodus
+#vtkIOEnSight
+#vtkIOExodus
 vtkIOExport
 vtkIOGeometry
 vtkIOImage
@@ -56,7 +56,7 @@ vtkIOImport
 vtkIOInfovis
 #vtkIOLSDyna
 #vtkIOLegacy
-vtkIOMINC
+#vtkIOMINC
 vtkIOMovie
 vtkIOPLY
 vtkIOParallel
@@ -95,7 +95,7 @@ vtkViewsContext2D
 vtkViewsCore
 vtkViewsInfovis
 vtkViewsQt
-vtkexodusII
+#vtkexodusII
 vtkfreetype
 vtkgl2ps
 vtkjsoncpp
@@ -119,8 +119,65 @@ if (NOT VTK_FOUND)
 message (STATUS "VTK_VERSION: ${VTK_VERSION}")
 
 
-file(GLOB SOURCES_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB HEADERS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+set(SOURCES_WCS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+           ${CMAKE_CURRENT_SOURCE_DIR}/src/mainwindow.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/treemodel.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/treeitem.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtkfitsreader.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vispoint.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/observedobject.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/operationqueue.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sednode.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sed.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pointspipe.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/pipe.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtkellipse.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/base64.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/astroutils.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sedvisualizerplot.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/qcustomplot.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sedplotpointcustom.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sedfitgrid_thin.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sedfitgrid_thick.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/luteditor.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtklegendscaleactor.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtktoolswidget.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/color.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtkfitstoolswidget.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/higalselectedsources.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/plotwindow.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vlkbquerycomposer.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vlkbtable.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/fitsimagestatisiticinfo.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vlkbsimplequerycomposer.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/dbquery.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/xmlparser.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vialactea_fileload.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/selectedsourcefieldsselect.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/downloadmanager.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/viewselectedsourcedataset.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vialactea.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/contour.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/histogram.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lutselector.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtkwindow_new.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtkfitstoolwidget_new.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtkfitstoolwidgetobject.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vialacteainitialquery.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/settingform.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/aboutform.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/selectedsourcesform.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lutcustomize.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vtkextracthistogram.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/extendedglyph3d.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/visivoimporterdesktop.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vstabledesktop.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/visivoutilsdesktop.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vsobjectdesktop.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/filtercustomize.cpp 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/vialacteastringdictwidget.cpp )
+
+file(GLOB HEADERS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 file(GLOB FORMS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/ui/*.ui)
 
 #file(GLOB SOURCES_WCS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/libwcs/*.c)
@@ -151,9 +208,9 @@ set(SOURCES_WCS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/libwcs/fitsfile.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/libwcs/worldpos.c )
 
 # a separate include folder for h files
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 # make libwcs include a separete
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/CFITSIO/include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/CFITSIO/lib)

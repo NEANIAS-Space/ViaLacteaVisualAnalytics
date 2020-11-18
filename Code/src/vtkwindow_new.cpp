@@ -62,7 +62,7 @@
 #include "vialacteainitialquery.h"
 #include "selectedsourcesform.h"
 #include "vtkContourFilter.h"
-#include "customvtklegendscaleactor.h"
+#include "vtklegendscaleactor.h"
 #include "vtkAxisActor2D.h"
 #include "vtkCubeAxesActor.h"
 #include "lutcustomize.h"
@@ -188,7 +188,9 @@ virtual void OnLeftButtonUp()
             geometryFilter->Update();
             vtkPolyData*  selected_poly = geometryFilter->GetOutput();
 
+
             this->SelectedMapper->SetInputData(selected_poly);
+
 
             this->SelectedMapper->ScalarVisibilityOff();
 
@@ -277,9 +279,7 @@ public:
         extractGeometry->SetImplicitFunction(frustum);
 
 
-
         extractGeometry->SetInputData(this->Points);
-
 
         extractGeometry->Update();
 
@@ -288,7 +288,6 @@ public:
         glyphFilter->Update();
 
         vtkPolyData*  selected = glyphFilter->GetOutput();
-
 
 
         this->SelectedMapper->SetInputData(selected);
@@ -1051,6 +1050,8 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, VisPoint * vis) : QMainWindow(pare
     renwin->SetInteractor(ui->qVTK1->interactor());
     ui->qVTK1->setRenderWindow(renwin);*/
 
+
+
     auto renWin = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     renwin = renWin;
     ui->qVTK1->setRenderWindow(renwin);
@@ -1095,6 +1096,8 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, VisPoint * vis) : QMainWindow(pare
 
     scaleActivate=true;
     isDatacube=false;
+
+
 
 }
 
@@ -1179,6 +1182,9 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         renwin = rw;
         renwin->AddRenderer(m_Ren1);
         ui->qVTK1->setRenderWindow(renwin);*/
+
+        std::cout<<"DONE_____"<<std::endl;
+
 
         auto renWin = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
         renwin = renWin;
@@ -1279,7 +1285,7 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         imageStack->AddImage(imageSliceBase);
 
 
-        vtkSmartPointer<CustomVtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<CustomVtkLegendScaleActor>::New();
+        vtkSmartPointer<vtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<vtkLegendScaleActor>::New();
         legendScaleActorImage->LegendVisibilityOff();
         legendScaleActorImage->setFitsFile(myfits);
 
@@ -1434,9 +1440,7 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
 
         vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
 
-
         mapper->SetInputData(frustum);
-
 
 
         sliceA = vtkActor::New();
@@ -1484,7 +1488,7 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         m_Ren1->GetActiveCamera( )->GetFocalPoint(cam_init_foc);
 
 
-        vtkSmartPointer<CustomVtkLegendScaleActor> legendScaleActor3d =  vtkSmartPointer<CustomVtkLegendScaleActor>::New();
+        vtkSmartPointer<vtkLegendScaleActor> legendScaleActor3d =  vtkSmartPointer<vtkLegendScaleActor>::New();
 
         legendScaleActor3d->LegendVisibilityOff();
         legendScaleActor3d->setFitsFile(myfits);
@@ -1521,7 +1525,7 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         setSliceDatacube(1);
         setSliceDatacube(0);
 
-        vtkSmartPointer<CustomVtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<CustomVtkLegendScaleActor>::New();
+        vtkSmartPointer<vtkLegendScaleActor> legendScaleActorImage =  vtkSmartPointer<vtkLegendScaleActor>::New();
 
         legendScaleActorImage->LegendVisibilityOff();
         legendScaleActorImage->setFitsFile(myfits);
@@ -1881,7 +1885,6 @@ void vtkwindow_new::addBubble(VSTableDesktop* m_VisIVOTable)
             polyData->SetLines(cells);
 
 
-
             appendFilter->AddInputData(polyData);
 
 
@@ -2044,7 +2047,6 @@ void vtkwindow_new::addFilaments(VSTableDesktop* m_VisIVOTable)
 
 
             appendFilter->AddInputData(polyData);
-
 
 
 
@@ -2356,11 +2358,11 @@ void vtkwindow_new::addCombinedLayer(QString name,  vtkSmartPointer<vtkLODActor>
     {
         vtkSmartPointer<vtkAppendPolyData> appendFilter2 =vtkSmartPointer<vtkAppendPolyData>::New();
 
-
         appendFilter2->AddInputData( vtkPolyData::SafeDownCast(VisualizedEllipseSourcesList.value(name)->GetMapper()->GetInputAsDataSet()));
 
 
         appendFilter2->AddInputData(vtkPolyData::SafeDownCast(actor->GetMapper()->GetInputAsDataSet())) ;
+
 
     // Remove any duplicate points.
     vtkSmartPointer<vtkCleanPolyData> cleanFilter2 = vtkSmartPointer<vtkCleanPolyData>::New();
@@ -2609,8 +2611,6 @@ ellipse_list=ellipse;
     {
 
         appendFilter->AddInputData(el->getPolyData());
-
-
         designation2fileMap.insert(el->getSourceName(), sourceFilename);
 
     }
@@ -2642,7 +2642,11 @@ ellipse_list=ellipse;
 
         appendFilter2->AddInputData( vtkPolyData::SafeDownCast(VisualizedEllipseSourcesList.value(ori_sourceFilename)->GetMapper()->GetInputAsDataSet()));
 
+
+
+
         appendFilter2->AddInputData(vtkPolyData::SafeDownCast(ellipseActor->GetMapper()->GetInputAsDataSet())) ;
+
 
         // Remove any duplicate points.
         vtkSmartPointer<vtkCleanPolyData> cleanFilter2 = vtkSmartPointer<vtkCleanPolyData>::New();

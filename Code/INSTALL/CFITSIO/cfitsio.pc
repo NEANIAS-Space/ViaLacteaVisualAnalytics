@@ -1,0 +1,12 @@
+prefix=/Users/evgeniya/neanias/cfitsio-3.49
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: cfitsio
+Description: FITS File Subroutine Library
+URL: https://heasarc.gsfc.nasa.gov/fitsio/
+Version: 3.49
+Libs: -L${libdir} -lcfitsio
+Libs.private: -lm 
+Cflags: -I${includedir}

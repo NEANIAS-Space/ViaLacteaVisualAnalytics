@@ -319,6 +319,7 @@ void contour::createContour()
             vtkSmartPointer<vtkPolyDataMapper>::New();
 
     surfaceMapper->SetInputData(polyData);
+
     surfaceMapper->ScalarVisibilityOn();
     surfaceMapper->SetScalarRange(
                 polyData->GetPointData()->GetScalars()->GetRange());
