@@ -4244,7 +4244,11 @@ void vtkwindow_new::on_glyphActivateCheckBox_clicked(bool checked)
 
     if(checked)
     {
+
         int nPoints=pp->getRows();
+
+        qDebug()<<nPoints<<" max_ "<<maxpoint;
+
         if(nPoints<=maxpoint){
             ui->glyphShapeComboBox->setEnabled(true);
             ui->glyphScalarComboBox->setEnabled(true);
