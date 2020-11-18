@@ -1050,6 +1050,8 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, VisPoint * vis) : QMainWindow(pare
     renwin->SetInteractor(ui->qVTK1->interactor());
     ui->qVTK1->setRenderWindow(renwin);*/
 
+
+
     auto renWin = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
     renwin = renWin;
     ui->qVTK1->setRenderWindow(renwin);
@@ -1094,6 +1096,8 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, VisPoint * vis) : QMainWindow(pare
 
     scaleActivate=true;
     isDatacube=false;
+
+
 
 }
 
@@ -1178,6 +1182,9 @@ vtkwindow_new::vtkwindow_new(QWidget *parent, vtkSmartPointer<vtkFitsReader> vis
         renwin = rw;
         renwin->AddRenderer(m_Ren1);
         ui->qVTK1->setRenderWindow(renwin);*/
+
+        std::cout<<"DONE_____"<<std::endl;
+
 
         auto renWin = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
         renwin = renWin;
