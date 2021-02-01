@@ -1,16 +1,19 @@
-// .NAME vtkFitsReader - read structured points from FITS file.
+// .NAME vtkFitsUnstructuredReader - read structured points from FITS file.
 // .SECTION Description
-// vtkFitsReader is a source object that reads FITS data files
+// vtkFitsUnstructuredReader is a source object that reads FITS data files
 // .SECTION Caveats
 // Uses CFITSIO v2.0 (http://heasarc.gsfc.nasa.gov/docs/software/fitsio)
 
-#ifndef __vtkFitsReader_h
-#define __vtkFitsReader_h
+#ifndef __vtkFitsUnstructuredReader_h
+#define __vtkFitsUnstructuredReader_h
 
 
 #include "vtkAlgorithm.h"
-#include "vtkStructuredPoints.h"
+#include "vtkUnstructuredGrid.h"
+#include "vtkPoints.h"
 #include "vtkFloatArray.h"
+#include "vtkPolyDataAlgorithm.h"
+#include "vtkPolyData.h"
 
 
 extern "C" {
@@ -18,21 +21,21 @@ extern "C" {
 }
 
 
-//class VTK_EXPORT vtkFitsReader : public vtkStructuredPointsSource
-class VTK_EXPORT vtkFitsReader : public vtkAlgorithm
+//class VTK_EXPORT vtkFitsUnstructuredReader : public vtkStructuredPointsSource
+class VTK_EXPORT vtkFitsUnstructuredReader : public vtkPolyDataAlgorithm
 {
 public:
-    //    vtkFitsReader();
-    //  static vtkFitsReader *New() {return new vtkFitsReader;}
+    //    vtkFitsUnstructuredReader();
+    //  static vtkFitsUnstructuredReader *New() {return new vtkFitsUnstructuredReader;}
 
-    static vtkFitsReader *New();
-    vtkFitsReader();
-    ~vtkFitsReader();
+    static vtkFitsUnstructuredReader *New();
+    vtkFitsUnstructuredReader();
+    ~vtkFitsUnstructuredReader();
 
     void SetFileName(std::string name);
     std::string GetFileName(){return filename;}
 
-    vtkTypeMacro(vtkFitsReader,vtkAlgorithm);
+    vtkTypeMacro(vtkFitsUnstructuredReader,vtkAlgorithm);
     void PrintSelf(ostream& os, vtkIndent indent);
     void PrintHeader(ostream& os, vtkIndent indent);
     void PrintTrailer(std::ostream& os , vtkIndent indent);
@@ -40,6 +43,7 @@ public:
     
     bool is3D;
     void CalculateRMS();
+    void ReadPoints( vtkPolyData* output);
     double GetSigma(){return sigma;}
     double GetRMS(){return rms;}
     double GetMedia(){return media;}
@@ -66,14 +70,14 @@ public:
 
     // Description:
     // Get the output data object for a port on this algorithm.
-    vtkStructuredPoints* GetOutput();
-    vtkStructuredPoints* GetOutput(int);
+    vtkPolyData* GetOutput();
+    vtkPolyData* GetOutput(int);
     virtual void SetOutput(vtkDataObject* d);
     // Description:
     // see vtkAlgorithm for details
-    virtual int ProcessRequest(vtkInformation*,
+   /* virtual int ProcessRequest(vtkInformation*,
                                vtkInformationVector**,
-                               vtkInformationVector*);
+                               vtkInformationVector*);*/
 
     std::string getSpecies() {return species;};
     std::string getTransition() {return transition;};
@@ -84,6 +88,7 @@ public:
     void setSurvey(std::string s) {survey=s;};
 
 protected:
+
     std::string survey;
     std::string species;
     std::string transition;
@@ -105,41 +110,17 @@ protected:
 
     float **minmaxslice;
 
-    // Description:
-    // This is called by the superclass.
-    // This is the method you should override.
-    virtual int RequestDataObject(
-            vtkInformation* request,
-            vtkInformationVector** inputVector,
-            vtkInformationVector* outputVector );
-
-    // convenience method
-    virtual int RequestInformation(
-            vtkInformation* request,
-            vtkInformationVector** inputVector,
-            vtkInformationVector* outputVector );
 
     // Description:
     // This is called by the superclass.
     // This is the method you should override.
-    virtual int RequestData(
-            vtkInformation* request,
-            vtkInformationVector** inputVector,
-            vtkInformationVector* outputVector );
+   int RequestData(vtkInformation*, vtkInformationVector**, vtkInformationVector*) override;
 
-    // Description:
-    // This is called by the superclass.
-    // This is the method you should override.
-    virtual int RequestUpdateExtent(
-            vtkInformation*,
-            vtkInformationVector**,
-            vtkInformationVector* );
 
-    virtual int FillOutputPortInformation( int port, vtkInformation* info );
 
 private:
-    //  vtkFitsReader( const vtkFitsReader& ); // Not implemented.
-    //  void operator = ( const vtkFitsReader& );  // Not implemented.
+    //  vtkFitsUnstructuredReader( const vtkFitsUnstructuredReader& ); // Not implemented.
+    //  void operator = ( const vtkFitsUnstructuredReader& );  // Not implemented.
     std::string filename;
     char title[80];
     char xStr[80];

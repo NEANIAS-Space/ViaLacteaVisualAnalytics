@@ -5,7 +5,7 @@
 #include "vtkPolyData.h"
 #include "vtkPolyDataMapper.h"
 #include "vtkProperty.h"
-#include "qdebug.h"
+//#include "qdebug.h"
 #include <cmath>
 #include "vtkImageViewer2.h"
 #include "vtkImageData.h"
