@@ -109,7 +109,7 @@ set("${CMAKE_FIND_PACKAGE_NAME}_BUILD_VERSION" "1")
 set("${CMAKE_FIND_PACKAGE_NAME}_LEGACY_REMOVE" "OFF")
 set("${CMAKE_FIND_PACKAGE_NAME}_AUTOINIT_INCLUDE" "\"vtkAutoInit.h\"")
 
-set("${CMAKE_FIND_PACKAGE_NAME}_AVAILABLE_COMPONENTS" "WrappingTools;ViewsQt;ViewsInfovis;CommonColor;ViewsContext2D;loguru;TestingRendering;TestingCore;vtksys;RenderingQt;RenderingVolumeOpenGL2;RenderingOpenGL2;glew;RenderingLabel;octree;RenderingLOD;RenderingImage;RenderingContextOpenGL2;IOTecplotTable;IOSegY;IOParallelXML;IOPLY;IOOggTheora;theora;ogg;IOMotionFX;pegtl;IOParallel;jsoncpp;IOLSDyna;IOInfovis;libxml2;zlib;IOImport;IOGeometry;IOVideo;IOMovie;IOExportPDF;libharu;IOExportGL2PS;gl2ps;RenderingGL2PSOpenGL2;png;IOExport;RenderingVtkJS;RenderingSceneGraph;IOEnSight;IOCityGML;pugixml;IOAsynchronous;InteractionImage;ImagingStencil;ImagingStatistics;ImagingMorphological;ImagingMath;GUISupportQtSQL;IOSQL;sqlite;GUISupportQt;GeovisCore;libproj;InfovisLayout;ViewsCore;InteractionWidgets;RenderingVolume;RenderingAnnotation;ImagingHybrid;ImagingColor;InteractionStyle;FiltersTopology;FiltersSelection;FiltersSMP;FiltersProgrammable;FiltersPoints;FiltersVerdict;verdict;FiltersParallelImaging;FiltersImaging;ImagingGeneral;FiltersHyperTree;FiltersGeneric;FiltersFlowPaths;FiltersAMR;FiltersParallel;FiltersTexture;FiltersModeling;FiltersHybrid;opengl;RenderingUI;DomainsChemistry;ChartsCore;InfovisCore;FiltersExtraction;ParallelDIY;diy2;IOXML;IOXMLParser;expat;ParallelCore;IOLegacy;IOCore;doubleconversion;lz4;lzma;utf8;FiltersStatistics;eigen;ImagingFourier;ImagingSources;IOImage;DICOMParser;jpeg;metaio;tiff;RenderingContext2D;RenderingFreeType;freetype;kwiml;RenderingCore;FiltersSources;ImagingCore;FiltersGeometry;FiltersGeneral;CommonComputationalGeometry;FiltersCore;CommonExecutionModel;CommonDataModel;CommonSystem;CommonMisc;CommonTransforms;CommonMath;CommonCore")
+set("${CMAKE_FIND_PACKAGE_NAME}_AVAILABLE_COMPONENTS" "WrappingTools;WebPython;WebCore;vtksys;WebGLExporter;ViewsInfovis;CommonColor;ViewsContext2D;loguru;TestingRendering;TestingCore;PythonContext2D;RenderingVolumeOpenGL2;RenderingOpenGL2;glew;opengl;PythonInterpreter;RenderingLabel;octree;RenderingLOD;RenderingImage;IOTecplotTable;IOSegY;IOParallelXML;IOPLY;IOOggTheora;theora;ogg;IOParallel;jsoncpp;IOInfovis;libxml2;zlib;IOImport;IOGeometry;IOVideo;IOMovie;IOExportPDF;libharu;IOExportGL2PS;RenderingGL2PSOpenGL2;gl2ps;png;IOExport;RenderingVtkJS;RenderingSceneGraph;IOAsynchronous;InteractionImage;ImagingStencil;ImagingStatistics;ImagingMorphological;ImagingMath;IOSQL;sqlite;GeovisCore;libproj;InfovisLayout;ViewsCore;InteractionWidgets;RenderingVolume;RenderingAnnotation;ImagingHybrid;ImagingColor;InteractionStyle;FiltersTopology;FiltersSelection;FiltersSMP;FiltersPython;FiltersProgrammable;FiltersPoints;FiltersVerdict;verdict;FiltersParallelImaging;FiltersImaging;ImagingGeneral;FiltersHyperTree;FiltersGeneric;FiltersFlowPaths;FiltersAMR;FiltersParallel;FiltersTexture;FiltersModeling;FiltersHybrid;RenderingUI;DomainsChemistry;CommonPython;WrappingPythonCore;Python;ChartsCore;InfovisCore;FiltersExtraction;ParallelDIY;diy2;IOXML;IOXMLParser;expat;ParallelCore;IOLegacy;IOCore;doubleconversion;lz4;lzma;utf8;FiltersStatistics;eigen;ImagingFourier;ImagingSources;IOImage;DICOMParser;jpeg;metaio;pugixml;tiff;RenderingContext2D;RenderingFreeType;freetype;kwiml;RenderingCore;FiltersSources;ImagingCore;FiltersGeometry;FiltersGeneral;CommonComputationalGeometry;FiltersCore;CommonExecutionModel;CommonDataModel;CommonSystem;CommonMisc;CommonTransforms;CommonMath;CommonCore")
 
 unset("${CMAKE_FIND_PACKAGE_NAME}_FOUND")
 set("${CMAKE_FIND_PACKAGE_NAME}_HAS_VTKm" "OFF")
@@ -141,13 +141,13 @@ include("${CMAKE_CURRENT_LIST_DIR}/vtkObjectFactory.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/vtkModuleJson.cmake")
 
-set("${CMAKE_FIND_PACKAGE_NAME}_PYTHON_VERSION" "")
-set("${CMAKE_FIND_PACKAGE_NAME}_WRAP_PYTHON" "OFF")
+set("${CMAKE_FIND_PACKAGE_NAME}_PYTHON_VERSION" "3")
+set("${CMAKE_FIND_PACKAGE_NAME}_WRAP_PYTHON" "ON")
 if (${CMAKE_FIND_PACKAGE_NAME}_WRAP_PYTHON)
   include("${CMAKE_CURRENT_LIST_DIR}/VTKPython-targets.cmake")
   include("${CMAKE_CURRENT_LIST_DIR}/vtkmodules-vtk-python-module-properties.cmake")
   include("${CMAKE_CURRENT_LIST_DIR}/vtkModuleWrapPython.cmake")
-  set("${CMAKE_FIND_PACKAGE_NAME}_PYTHONPATH" "")
+  set("${CMAKE_FIND_PACKAGE_NAME}_PYTHONPATH" "lib/python3.8/site-packages")
 endif ()
 
 set("${CMAKE_FIND_PACKAGE_NAME}_WRAP_JAVA" "OFF")

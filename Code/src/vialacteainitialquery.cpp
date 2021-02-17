@@ -246,49 +246,6 @@ void VialacteaInitialQuery::finishedSlot(QNetworkReply* reply)
         QXmlStreamReader xml(reply);
         QString url=reply->request().url().toString();
 
-        /*       if( url.contains("vlkb_search")  )
-        {
-
-            parser->parseXML_fitsDownload(xml, string);
-
-
-        }
-*/
-        //seconda query per cercare il fits corretto
-        /*   if( url.contains("vlkb_search") && url.contains("surveyname") )
-        {
-
-            parser->parseXML_fitsDownload(xml, string);
-            if(string.compare("NULL")!=0)
-            {
-                loading->setFileName("Fits image found");
-
-                QString urlStringCutout=vlkbUrl+"/vlkb_cutout?pubdid="+QUrl::toPercentEncoding(string)+"&l="+ui->l_lineEdit->text()+"&b="+ui->b_lineEdit->text();
-                if(isRadius)
-                {
-                    urlStringCutout+="&r="+ui->r_lineEdit->text();
-                }
-                else
-                    urlStringCutout+="&dl="+ui->dlLineEdit->text()+"&db="+ui->dbLineEdit->text();
-
-                urlStringCutout+="&vl=0&vu=0&nullvals";
-
-                qDebug()<<urlStringCutout;
-                QUrl url2 (urlStringCutout);
-
-
-                //nam->get(QNetworkRequest(url2));
-            }
-            else
-            {
-                loading->setFileName("No fits image on this region");
-                loading->loadingEnded();
-                loading->hide();
-                QMessageBox::critical(NULL, QObject::tr("Error"), QObject::tr("No fits image on this region - Try again"));
-            }
-        }
-
-        */
 
         if (url.contains("vlkb_cutout") || url.contains("vlkb_merge")  )
         {

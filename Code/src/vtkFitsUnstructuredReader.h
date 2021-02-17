@@ -28,6 +28,12 @@ public:
     //    vtkFitsUnstructuredReader();
     //  static vtkFitsUnstructuredReader *New() {return new vtkFitsUnstructuredReader;}
 
+    struct VALS{
+        int ii;
+        float val;
+        VALS(int i, float v){ii=i; val=v;};
+    };
+
     static vtkFitsUnstructuredReader *New();
     vtkFitsUnstructuredReader();
     ~vtkFitsUnstructuredReader();
@@ -42,8 +48,16 @@ public:
     double getInitSlice(){return initSlice;}
     
     bool is3D;
-    void CalculateRMS();
+    void CalculateRMS(std::vector<VALS>& vals);
     void ReadPoints( vtkPolyData* output);
+    void DownloadFromUrl(std::string url)
+    {
+        DownloadFile(url,m_fileToDownload);
+        SetFileName(m_fileToDownload);
+
+
+    }
+    void GenerateVLKBUrl(std::string point,std::string radius);
     double GetSigma(){return sigma;}
     double GetRMS(){return rms;}
     double GetMedia(){return media;}
@@ -130,7 +144,11 @@ private:
 
     void ReadHeader();
     void printerror(int status); // from fitsio distribution
+    void DownloadFile(std::string url,std::string outName);
+
+    static size_t write_data(void *ptr, size_t size, size_t nmemb, FILE *stream);
     double initSlice;
+    std::string m_fileToDownload;
 };
 
 

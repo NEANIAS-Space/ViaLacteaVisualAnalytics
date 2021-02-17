@@ -16,7 +16,8 @@ link_directories(${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/CFITSIO/lib)
 
  
   # Find VTK and get VTK configuration information
-  find_package(VTK REQUIRED)
+ # find_package(VTK REQUIRED)
+find_package(VTK COMPONENTS CommonCore Python)
 
   # define VTK_VERSION if not already defined
   if(NOT DEFINED VTK_VERSION)
@@ -67,6 +68,13 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
     PATHS
         ${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/CFITSIO/lib)
 
+# Look for libCurl
+  find_library(
+    curl
+    curl
+    PATHS
+        ${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/CURL/lib)
+
 
   if(NOT VTK_VERSION VERSION_LESS 8.90)
     # When building as a stand-alone module for VTK 9
@@ -96,7 +104,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}
 )
 
 
-if(VTK_WRAP_PYTHON)
+#if(VTK_WRAP_PYTHON)
 
      vtk_module_wrap_python(
         MODULES         ${VIALACTEA_modules}
@@ -106,7 +114,7 @@ if(VTK_WRAP_PYTHON)
         CMAKE_DESTINATION   "${CMAKE_INSTALL_LIBDIR}/cmake/vtk"
         LIBRARY_DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         BUILD_STATIC    OFF)
-    endif()
+  #  endif()
 
     
   endif() #(NOT VTK_VERSION VERSION_LESS 8.90)

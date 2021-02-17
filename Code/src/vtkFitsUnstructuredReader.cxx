@@ -10,11 +10,24 @@
 #include "vtkPointData.h"
 #include <iostream>     // std::cout
 #include <sstream>
+#include <algorithm>
+#include <curl/curl.h>
 
+
+template<class T>
+constexpr const T& clamp( const T& v, const T& lo, const T& hi )
+{
+    assert( !(hi < lo) );
+    return (v < lo) ? lo : (hi < v) ? hi : v;
+}
 
 //vtkCxxRevisionMacro(vtkFitsUnstructuredReader, "$Revision: 1.1 $");
 vtkStandardNewMacro(vtkFitsUnstructuredReader);
 
+size_t  vtkFitsUnstructuredReader::write_data(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
 //----------------------------------------------------------------------------
 vtkFitsUnstructuredReader::vtkFitsUnstructuredReader()
 {
@@ -25,7 +38,7 @@ vtkFitsUnstructuredReader::vtkFitsUnstructuredReader()
     this->title[0]='\0';
     this->SetNumberOfInputPorts( 0 );
     this->SetNumberOfOutputPorts( 1 );
-    //this->is3D=is3D;
+
 
     for (int i=0; i<3; i++)
     {
@@ -35,10 +48,189 @@ vtkFitsUnstructuredReader::vtkFitsUnstructuredReader()
         naxes[i]= 10;
     }
     
-    this->is3D=false;
+
     this->SetNumberOfInputPorts(0);
+    m_fileToDownload="temp.fits";
 
 
+}
+
+void vtkFitsUnstructuredReader::GenerateVLKBUrl(std::string point,std::string radius)
+{
+    std::vector<std::string> strings;
+        std::istringstream fpoint(point);
+        std::string s;
+        float p[2];
+        getline(fpoint, s, ',');
+        p[0]=::atof(s.c_str()); //l_lineEdit
+        getline(fpoint, s, ',');
+        p[1]=::atof(s.c_str()); //b_lineEdit
+
+           // ui->glatLineEdit->setText(QString::number( pieces[1].toDouble(), 'f', 4 ));
+           // ui->glonLineEdit->setText(QString::number( pieces[0].toDouble(), 'f', 4 ));
+
+        std::istringstream fradius(radius);
+        float r[2];
+        getline(fradius, s, ',');
+        r[0]=::atof(s.c_str()); //dlLineEdit
+        getline(fradius, s, ',');
+        r[1]=::atof(s.c_str()); //dbLineEdit
+        bool isRadius=false;
+        r[0]=clamp<float>(r[0],0.0,4.0);
+        r[1]=clamp<float>(r[1],0.0,4.0);
+
+
+        //settings.setValue("vlkburl","http://ia2-vialactea.oats.inaf.it/libjnifitsdb-1.0.2p/");
+
+        std::string vlkbUrl="http://ia2-vialactea.oats.inaf.it/libjnifitsdb-1.0.2p/"; //I guess it should be different, with some fille added to it
+        std::string urlString=vlkbUrl+"/vlkb_search?l="+std::to_string(p[0])+"&b="+std::to_string(p[1]);//+"&species="+species;
+            if(isRadius)
+            {
+                //urlString+="&r="+ui->r_lineEdit->text();
+            }
+            else
+                urlString+="&dl="+std::to_string(r[0])+"&db="+std::to_string(r[1]);
+
+            urlString+="&vl=-500000&vu=500000";
+
+        /*
+         * Download from url
+         *  vlkbUrl= settings.value("vlkburl", "").toString();
+         *  QString urlString=vlkbUrl+"/vlkb_search?l="+ui->l_lineEdit->text()+"&b="+ui->b_lineEdit->text();//+"&species="+species;
+    if(isRadius)
+    {
+        urlString+="&r="+ui->r_lineEdit->text();
+    }
+    else
+        urlString+="&dl="+ui->dlLineEdit->text()+"&db="+ui->dbLineEdit->text();
+
+    urlString+="&vl=-500000&vu=500000";
+
+    QUrl url2 (urlString);
+
+    nam->get(QNetworkRequest(url2));
+         */
+
+
+            //As far just download from url and save as fits just an xml file
+            //TODO preprocess xml instead
+
+        DownloadFromUrl(urlString);
+        std::cout<<"URL "<<urlString<<std::endl;
+
+       // after void VialacteaInitialQuery::finishedSlot(QNetworkReply* reply)
+       //         performs downloading from url and xml preprocessing
+
+        //OTHERS
+
+        //Query example
+        /*
+         * vq= new VialacteaInitialQuery(ui->fileNameLineEdit->text());
+         * vq= new VialacteaInitialQuery();
+
+    vq->setL(ui->glonLineEdit->text()); //i->l_lineEdit->setText(l);
+    vq->setB(ui->glatLineEdit->text()); //ui->b_lineEdit->setText(b.replace(" ",""));
+    if (ui->radiumLineEdit->text()!="")
+        vq->setR(ui->radiumLineEdit->text());
+        //isRadius=true;
+        // ui->r_lineEdit->setText(r);
+    else
+    {
+        vq->setDeltaRect(ui->dlLineEdit->text(),ui->dbLineEdit->text());
+        //isRadius=false;
+      //ui->dlLineEdit->setText(dl);
+    //ui->dbLineEdit->setText(db);
+
+    }
+
+    QList < QPair<QString, QString> > selectedSurvey;
+
+    QList<QCheckBox *> allButtons = ui->surveySelectorGroupBox->findChildren<QCheckBox *>();
+    for(int i = 0; i < allButtons.size(); ++i)
+    {
+        qDebug()<<"i: "<<i<<" "<<allButtons.at(i);
+
+        if(allButtons.at(i)->isChecked())
+        {
+
+
+            selectedSurvey.append(mapSurvey.value(i));
+        }
+    }
+
+    //connettere la banda selezionata
+    vq->setSpecies("Continuum");
+    vq->setSurveyname(selectedSurvey.at(0).first);
+    vq->setTransition(selectedSurvey.at(0).second);
+    vq->setSelectedSurveyMap(selectedSurvey);
+    vq->on_queryPushButton_clicked();
+         */
+
+        /*
+         * Access settings
+         * QSettings settings(m_sSettingsFile, QSettings::NativeFormat);
+
+    if (settings.value("vlkbtype", "public").toString()=="public")
+    {
+        qDebug()<<"public access to vlkb";
+        settings.setValue("vlkburl","http://ia2-vialactea.oats.inaf.it/libjnifitsdb-1.0.2p/");
+        settings.setValue("vlkbtableurl","http://ia2-vialactea.oats.inaf.it/vlkb/catalogues/tap");
+
+
+
+    }
+    else if (settings.value("vlkbtype", "public").toString()=="private")
+    {
+        qDebug()<<"private access to vlkb";
+
+
+        QString user= settings.value("vlkbuser", "").toString();
+        QString pass = settings.value("vlkbpass", "").toString();
+
+
+       // settings.setValue("vlkburl","http://"+user+":"+pass+"@ia2-vialactea.oats.inaf.it:8080/libjnifitsdb-0.23.2/");
+      //  settings.setValue("vlkburl","http://"+user+":"+pass+"@ia2-vialactea.oats.inaf.it:8080/libjnifitsdb-0.23.16/");
+        settings.setValue("vlkburl","http://"+user+":"+pass+"@ia2-vialactea.oats.inaf.it:8080/libjnifitsdb-1.0.2/");
+        settings.setValue("vlkbtableurl","http://ia2-vialactea.oats.inaf.it:8080/vlkb");
+
+
+    }
+
+    if (settings.value("online",true) == true)
+    {
+        tilePath = settings.value("onlinetilepath", "http://visivo.oact.inaf.it/vialacteatiles/openlayers.html").toString();
+        ui->webView->load(QUrl(tilePath));
+
+    }
+    else
+    {
+       tilePath = settings.value("tilepath", "").toString();
+       ui->webView->load(QUrl::fromLocalFile(tilePath));
+
+    }
+         */
+
+
+
+
+
+}
+void vtkFitsUnstructuredReader::DownloadFile(std::string url,std::string outName)
+{
+CURL *curl;
+    FILE *fp;
+    CURLcode res;
+    curl = curl_easy_init();
+    if (curl) {
+        fp = fopen(outName.c_str(),"wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        res = curl_easy_perform(curl);
+        /* always cleanup */
+        curl_easy_cleanup(curl);
+        fclose(fp);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -345,32 +537,20 @@ void vtkFitsUnstructuredReader::printerror(int status) {
 // fitsio distribution.
 void vtkFitsUnstructuredReader::ReadPoints( vtkPolyData *output){
 
- int num2=0;
+    //Calculating contour value to further through away the points
+                 std::vector<VALS> vals;
+                  CalculateRMS(vals);
 
- fitsfile *fptr;
- int status = 0, nfound = 0, anynull = 0;
- long fpixel, nbuffer, npixels, ii, n=0;
- double meansquare=0;
- const int buffsize = 1000;
+                int num2=0; //number of particles
 
 
- float nullval, buffer[buffsize];
- char *fn=new char[filename.length() + 1];
- strcpy(fn, filename.c_str());
 
- if ( fits_open_file(&fptr, fn, READONLY, &status) )
-     printerror( status );
 
- delete []fn;
- vtkFloatArray *scalars = vtkFloatArray::New();
- if ( fits_read_keys_lng(fptr, "NAXIS", 1, 3, naxes, &nfound, &status) )
-     printerror( status );
-
- npixels  = naxes[0] * naxes[1] * naxes[2];
- n=npixels;
 
  vtkPoints* newPoints;
  vtkCellArray* newVerts;
+
+ int npixels=vals.size();
 
  newPoints = vtkPoints::New();
 
@@ -385,125 +565,76 @@ void vtkFitsUnstructuredReader::ReadPoints( vtkPolyData *output){
 
  newVerts->InsertNextCell(npixels);
 
- fpixel   = 1;
- nullval  = 0;
- datamin  = 1.0E30;
- datamax  = -1.0E30;
- //output->SetDimensions(naxes[0], naxes[1], naxes[2]);
- //output->SetOrigin(0.0, 0.0, 0.0);
-
+ vtkFloatArray *scalars = vtkFloatArray::New();
  scalars->Allocate(npixels);
- std::cout<<"dims "<< naxes[0]<<" "<< naxes[1]<<" "<< naxes[2]<<" "<<std::endl;
+
 
   std::cout<<"number of points expected "<<npixels<<std::endl;
 
-  float fmax=std::max(naxes[0],naxes[1]);
-  fmax=std::max(fmax,naxes[2]);
 
-  float norm=fmax/100;
-
+  float point[3];
+  float p[3];
   float bmin[3]={0,0,0};
+  float norm=fmax(naxes[0],naxes[1]);
+  norm=fmax(norm,naxes[1])/100;
+
   float bmax[3]={naxes[0]/norm,naxes[1]/norm,naxes[2]/norm};
   float delta[3]={(bmax[0]-bmin[0])/naxes[0],(bmax[1]-bmin[1])/naxes[1],(bmax[2]-bmin[2])/naxes[2]};
 
-      int i_index,j_index,k_index;
-      i_index=0;
-      j_index=0;
-      k_index=0;
- //For every pixel
- while (npixels > 0) {
+  float normilise=naxes[0]/naxes[2];
+      int i,j,k;
+      i=0;
+      j=0;
+      k=0;
 
 
-     nbuffer = npixels;
-     if (npixels > buffsize)
-         nbuffer = buffsize;
+      //For every pixel
+      for (std::vector<VALS>::iterator it = vals.begin() ; it != vals.end(); ++it)
 
-     if ( fits_read_img(fptr, TFLOAT, fpixel, nbuffer, &nullval,
-                        buffer, &anynull, &status) )
-         printerror( status );
+      {
 
 
+          float I= it->val;
 
+          if((I>3*rms))//&&(I<=(7*rms))) //check if still should skip
+           {
+              float approx=float(it->ii)/float(naxes[1]*naxes[0]);
+              k=int(floor(approx));
+              float rest=approx-k;
 
- // std::cout<<"number  "<<rms<<std::endl;
-     for (ii = 0; ii < nbuffer; ii++)  {
-             if (!std::isnan(buffer[ii]))
-         { //fill not empty array
+              if (rest>0)
+              {
+                  int ii2=it->ii-naxes[1]*naxes[0]*k;
+                  approx=float(ii2)/float(naxes[0]);
+                  j=int(floor(approx));
+                  if (approx-float(j)>0){
+                      i=ii2-naxes[0]*j;
 
-                 float I= buffer[ii];
-                 if(I-3*rms>=0) //check if still should skip
-                 {
+                  } else i=0;
+              }
+              else {
+                  j=0;
+                  i=0;
+              }
 
-                 float val=I;
-                 float r=val+0.01-3*rms;
-                 int type=0;
-                 bool active=true;
-                 float p[3];
-                 p[0]=bmin[0]+delta[0]*i_index;
-                 p[1]=bmin[1]+delta[1]*j_index;
-                 p[2]=bmin[2]+delta[2]*k_index;
-                /* Flipping
-                 *    if(i_index<naxes[0]/2)
-                 {
-                     p[0]=bmin[0]-delta[0]*(i_index);
-                  }
-                   else {
-                       p[0]=bmax[0]-delta[0]*(i_index);
-                   }
-                 */
+              p[0]=bmin[0]+delta[0]*i;
+              p[1]=bmin[1]+delta[1]*j;
+              p[2]=bmin[2]+delta[2]*k;
 
                    newVerts->InsertCellPoint(newPoints->InsertNextPoint(p[0],p[1],p[2]));
 
-                 scalars->InsertNextValue(buffer[ii]);
+                 scalars->InsertNextValue(I);
 
 
              num2++;
+          }
 
-                 //skip=true;
-             }
-
-
-
-         }
-
-         //-----
-         if(i_index<naxes[0]) i_index++;
-         else {
-
-                 if(j_index<naxes[1])
-                 {
-                     j_index++;
-                     i_index=0;
-                 }
-                 else
-                 {
-                     if(k_index<naxes[2]) {
-                         k_index++;
-                         i_index=0;
-                         j_index=0;
-                        // std::cout<<"increase z="<<k_index<<std::endl;
-                     } else
-                     {
-                         std::cout<<"left="<<npixels-nbuffer<<std::endl;
-                     }
-                  }
-
-     }
-         //---------
 
 
 
 
      }
 
-     npixels -= nbuffer;
-     fpixel  += nbuffer;
- }
-
-
-
- if ( fits_close_file(fptr, &status) )
-     printerror( status );
 
 
  newPoints->Resize(num2);
@@ -519,58 +650,45 @@ void vtkFitsUnstructuredReader::ReadPoints( vtkPolyData *output){
  //-----
 
 }
-void vtkFitsUnstructuredReader::CalculateRMS() {
+void vtkFitsUnstructuredReader::CalculateRMS(std::vector<VALS>& vals) {
     
-
     ReadHeader();
-    
-    //vtkPoints *output = (vtkPoints *) this->GetOutput();
+
     fitsfile *fptr;
     int status = 0, nfound = 0, anynull = 0;
     long fpixel, nbuffer, npixels, ii, n=0;
     double meansquare=0;
     const int buffsize = 1000;
-    
-    
+
+
     float nullval, buffer[buffsize];
     char *fn=new char[filename.length() + 1];
     strcpy(fn, filename.c_str());
-    
+
     if ( fits_open_file(&fptr, fn, READONLY, &status) )
         printerror( status );
-    
+
     delete []fn;
-   // vtkFloatArray *scalars = vtkFloatArray::New();
+
     if ( fits_read_keys_lng(fptr, "NAXIS", 1, 3, naxes, &nfound, &status) )
         printerror( status );
-    
+
     npixels  = naxes[0] * naxes[1] * naxes[2];
     n=npixels;
-    
+
     fpixel   = 1;
     nullval  = 0;
     datamin  = 1.0E30;
     datamax  = -1.0E30;
 
-
     int bad=0;
-    int slice;
-    int num=0;
 
 
-
-    minmaxslice=new float*[naxes[2]];
-    for(int i=0;i< naxes[2];i++)
-    {
-
-        minmaxslice[i] = new float[2];
-
-        minmaxslice[i][0]= 1.0E30;
-        minmaxslice[i][1]= -1.0E30;
-
-    }
 
     //For every pixel
+
+    int num2=0;
+
     while (npixels > 0) {
 
 
@@ -579,58 +697,48 @@ void vtkFitsUnstructuredReader::CalculateRMS() {
         nbuffer = npixels;
         if (npixels > buffsize)
             nbuffer = buffsize;
-        
+
         if ( fits_read_img(fptr, TFLOAT, fpixel, nbuffer, &nullval,
                            buffer, &anynull, &status) )
             printerror( status );
 
 
+
         for (ii = 0; ii < nbuffer; ii++)  {
-            // slice= (num/(naxes[0]*naxes[1]))%(naxes[0]*naxes[1]);
-            slice= (num/ (naxes[0]*naxes[1]) );
-            num++;
 
-            // qDebug()<<"npixel: "<<num <<" è sulla slice "<< slice <<" x: "<<naxes[0]<<" y: "<<naxes[1]<<" z: "<<naxes[2];
-
-            if (std::isnan(buffer[ii]))
-                buffer[ii] = -1000000.0;
-            //scalars->InsertNextValue(buffer[ii]);
-
-            if ( buffer[ii]!=-1000000.0)
+            if (!std::isnan(buffer[ii])&&(buffer[ii]>=0.0f))
             {
+
+
                 if ( buffer[ii] < datamin )
                     datamin = buffer[ii];
                 if ( buffer[ii] > datamax   )
                     datamax = buffer[ii];
 
-                //qDebug()<<"poreeeee "<<slice;
-                if ( buffer[ii] < minmaxslice[slice][0] )
-                    minmaxslice[slice][0] = buffer[ii];
-                if ( buffer[ii] > minmaxslice[slice][1]   )
-                    minmaxslice[slice][1] = buffer[ii];
-
-                //meansquare+=buffer[ii]*buffer[ii];
-                //  media+=buffer[ii];
                 meansquare+=buffer[ii]*buffer[ii];
+                vals.push_back(VALS(num2,buffer[ii]));
+
 
             }
-            else
+            else{
                 bad++;
+            }
+            num2++;
         }
-        
         npixels -= nbuffer;
         fpixel  += nbuffer;
     }
 
     n=n-bad;
+    printf("pixesl=%d\n",n);
     double means=meansquare/n;
     rms=sqrt(means);
-    // sigma=qSqrt(sigma/n);
+
 
     if ( fits_close_file(fptr, &status) )
         printerror( status );
-    
-   // output->GetPointData()->SetScalars(scalars);
+
+
 
     return;
 }

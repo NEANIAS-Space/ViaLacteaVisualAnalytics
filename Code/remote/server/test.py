@@ -60,9 +60,8 @@ renderWindowInteractor.GetInteractorStyle().SetCurrentStyleToTrackballCamera()
 
 fitsReader = vtk.vtkVialactea.vtkFitsUnstructuredReader()
 fitsReader.is3D=True;
-fitsReader.SetFileName("LVHIS001.na.icln.fits");
-
-fitsReader.CalculateRMS();
+fitsReader.SetFileName("LVHIS027.na.icln.fits");
+fitsReader.GenerateVLKBUrl("0,0","2,2");
 fitsReader.Update();
 
 max=fitsReader.GetMax();
@@ -75,7 +74,7 @@ polydata=fitsReader.GetOutput();
 popSplatter = vtk.vtkGaussianSplatter()
 popSplatter.SetInputData(polydata)
 popSplatter.SetSampleDimensions(170, 170, 170)
-popSplatter.SetRadius(0.0058)
+popSplatter.SetRadius(0.0078)
 popSplatter.ScalarWarpingOff()
 popSplatter.Update()
 

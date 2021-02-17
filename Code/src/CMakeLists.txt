@@ -16,6 +16,7 @@ set(LIB_SRCS
 # Third party library dependencies
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/CFITSIO/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/include)
 link_directories(${CMAKE_CURRENT_SOURCE_DIR}/INSTALL/CFITSIO/lib)
 
 
@@ -81,5 +82,5 @@ set_source_files_properties(${LIB_HDRS} ${LIB_SPECIAL}
      SOURCES ${LIB_SRCS}
      HEADERS ${LIB_SRC_HDRS} ${LIB_HDRS})
    vtk_module_link(VTK::VIALACTEA
-     PRIVATE ${cfitsio})
+     PRIVATE ${cfitsio} ${curl} )
 
